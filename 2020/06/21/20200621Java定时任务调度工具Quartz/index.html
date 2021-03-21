@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/skate-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/skate-16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Quartz 是一个完全由 Java 编写的开源作业调度框架，为在 Java 应用程序中进行作业调度提供了简单却强大的机制。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java定时任务调度工具Quartz">
+<meta property="og:url" content="http://example.com/2020/06/21/20200621Java%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E5%B7%A5%E5%85%B7Quartz/index.html">
+<meta property="og:site_name" content="踢树叶">
+<meta property="og:description" content="Quartz 是一个完全由 Java 编写的开源作业调度框架，为在 Java 应用程序中进行作业调度提供了简单却强大的机制。">
+<meta property="og:locale">
+<meta property="og:image" content="https://wx4.sinaimg.cn/mw690/0079GFTfgy1gg4jmkmxdcj30pc0abjvi.jpg">
+<meta property="og:image" content="https://wx2.sinaimg.cn/mw690/0079GFTfgy1gg4mrb6e2zj30qh09rq7c.jpg">
+<meta property="og:image" content="https://wx1.sinaimg.cn/mw690/0079GFTfgy1gg4n2jydwlj313w0ope1c.jpg">
+<meta property="article:published_time" content="2020-06-21T03:25:36.000Z">
+<meta property="article:modified_time" content="2020-06-27T14:53:08.319Z">
+<meta property="article:author" content="OllieGo">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wx4.sinaimg.cn/mw690/0079GFTfgy1gg4jmkmxdcj30pc0abjvi.jpg">
+
+<link rel="canonical" href="http://example.com/2020/06/21/20200621Java%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E5%B7%A5%E5%85%B7Quartz/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Java定时任务调度工具Quartz | 踢树叶</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Navigationsleiste an/ausschalten">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">踢树叶</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Startseite</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>Über</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Schlagwörter</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Kategorien</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archiv</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/21/20200621Java%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E5%B7%A5%E5%85%B7Quartz/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/olliego.jpg">
+      <meta itemprop="name" content="OllieGo">
+      <meta itemprop="description" content="落叶焚いて野守の神を见し夜かな">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="踢树叶">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java定时任务调度工具Quartz
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Veröffentlicht am</span>
+
+              <time title="Erstellt: 2020-06-21 11:25:36" itemprop="dateCreated datePublished" datetime="2020-06-21T11:25:36+08:00">2020-06-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Bearbeitet am</span>
+                <time title="Geändert am: 2020-06-27 22:53:08" itemprop="dateModified" datetime="2020-06-27T22:53:08+08:00">2020-06-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">in</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbole im Artikel gezählt">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">Symbole im Artikel gezählt: </span>
+              <span>22k</span>
+            </span>
+            <span class="post-meta-item" title="Lesezeit">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">Lesezeit &asymp;</span>
+              <span>20 minuten.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Quartz 是一个完全由 Java 编写的开源作业调度框架，为在 Java 应用程序中进行作业调度提供了简单却强大的机制。<span id="more"></span></p>
+<h1 id="Quartz-核心概念"><a href="#Quartz-核心概念" class="headerlink" title="Quartz 核心概念"></a>Quartz 核心概念</h1><ol>
+<li>Job 表示一个工作，要执行的具体内容。此接口中只有一个execute方法，如下：<br><code>void execute(JobExecutionContext context) </code></li>
+<li>JobDetail 表示一个具体的可执行的调度程序，Job 是这个可执行程调度程序所要执行的内容，另外 JobDetail 还包含了这个任务调度的方案和策略。 </li>
+<li>Trigger 代表一个调度参数的配置，什么时候去调。 </li>
+<li>Scheduler 代表一个调度容器，一个调度容器中可以注册多个 JobDetail 和 Trigger。当 Trigger 与 JobDetail 组合，就可以被 Scheduler 容器调度了。 </li>
+</ol>
+<h1 id="第一个Quartz程序"><a href="#第一个Quartz程序" class="headerlink" title="第一个Quartz程序"></a>第一个Quartz程序</h1><p>每隔两秒定时打印Hello World<br>HelloJob.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.olliego;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.quartz.Job;</span><br><span class="line"><span class="keyword">import</span> org.quartz.JobExecutionContext;</span><br><span class="line"><span class="keyword">import</span> org.quartz.JobExecutionException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.text.SimpleDateFormat;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * HelloJob</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> OllieGo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2020-06-21</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloJob</span> <span class="keyword">implements</span> <span class="title">Job</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(JobExecutionContext jobExecutionContext)</span> <span class="keyword">throws</span> JobExecutionException </span>&#123;</span><br><span class="line">        <span class="comment">//打印当前时间</span></span><br><span class="line">        Date date = <span class="keyword">new</span> Date();</span><br><span class="line">        SimpleDateFormat sf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;当前任务时间：&quot;</span> + sf.format(date));</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello World&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>HelloScheduler.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.olliego;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.quartz.*;</span><br><span class="line"><span class="keyword">import</span> org.quartz.impl.StdSchedulerFactory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.text.SimpleDateFormat;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * HelloScheduler</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> OllieGo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2020-06-21</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloScheduler</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> SchedulerException </span>&#123;</span><br><span class="line">        <span class="comment">//创建一个JobDetail实例，将该实例与HelloJob Class绑定，通过反射获取Job信息</span></span><br><span class="line">        JobDetail jobDetail = JobBuilder.newJob(HelloJob.class)</span><br><span class="line">                .withIdentity(<span class="string">&quot;myJob&quot;</span>, <span class="string">&quot;group1&quot;</span>).build();</span><br><span class="line">        <span class="comment">//创建一个Trigger实例，定义该Job立即执行，并且两秒执行一次，直到永远</span></span><br><span class="line">        <span class="comment">//虽然组名同为group1，但Trigger和JobDetail类不同，故不同组</span></span><br><span class="line">        Trigger trigger = TriggerBuilder.newTrigger()</span><br><span class="line">                .withIdentity(<span class="string">&quot;myTrigger&quot;</span>, <span class="string">&quot;group1&quot;</span>)</span><br><span class="line">                .startNow()</span><br><span class="line">                .withSchedule(</span><br><span class="line">                        SimpleScheduleBuilder.simpleSchedule()</span><br><span class="line">                                .withIntervalInSeconds(<span class="number">2</span>).repeatForever())</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建Scheduler实例</span></span><br><span class="line">        SchedulerFactory schedulerFactory = <span class="keyword">new</span> StdSchedulerFactory();</span><br><span class="line">        Scheduler scheduler = schedulerFactory.getScheduler();</span><br><span class="line">        scheduler.start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//打印当前时间</span></span><br><span class="line">        Date date = <span class="keyword">new</span> Date();</span><br><span class="line">        SimpleDateFormat sf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;当前时间：&quot;</span> + sf.format(date));</span><br><span class="line"></span><br><span class="line">        <span class="comment">//将jobDetail和trigger绑定在一起，并传入到scheduler</span></span><br><span class="line">        scheduler.scheduleJob(jobDetail, trigger);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">当前时间：2020-06-21 11:17:13</span><br><span class="line">当前任务时间：2020-06-21 11:17:13</span><br><span class="line">Hello World</span><br><span class="line">当前任务时间：2020-06-21 11:17:15</span><br><span class="line">Hello World</span><br><span class="line">当前任务时间：2020-06-21 11:17:17</span><br><span class="line">Hello World</span><br></pre></td></tr></table></figure>
+
+<h1 id="Job-amp-JobDetail"><a href="#Job-amp-JobDetail" class="headerlink" title="Job&amp;JobDetail"></a>Job&amp;JobDetail</h1><h2 id="Job实例在Quartz中的生命周期"><a href="#Job实例在Quartz中的生命周期" class="headerlink" title="Job实例在Quartz中的生命周期"></a>Job实例在Quartz中的生命周期</h2><p>每次调度器执行Job时，它在调用execute方法前会创建一个新的Job实例。<br>当调用完成后，关联的Job对象实例会被释放，释放的实例会被垃圾回收机制回收。</p>
+<h2 id="JobDetail"><a href="#JobDetail" class="headerlink" title="JobDetail"></a>JobDetail</h2><p>JobDetail为Job实例提供了许多设置属性，以及JobDataMap成员变量属性，它用来存储特定Job实例的状态信息，调度器需要借助JobDetail对象来添加Job实例。</p>
+<p>重要属性</p>
+<ul>
+<li>name 任务名称</li>
+<li>group 任务所在的组</li>
+<li>jobClass 任务的实现类</li>
+<li>jobDataMap 可以用来装载任何可以序列化的数据对象，当Job实例对象被执行时这些参数对象会传递给它</li>
+</ul>
+<h1 id="JobExecutionContext"><a href="#JobExecutionContext" class="headerlink" title="JobExecutionContext"></a>JobExecutionContext</h1><ul>
+<li>当Scheduler调用一个Job，就会将JobExecutionContext传递给Job的execute()方法。</li>
+<li>Job能通过JobExecutionContext对象访问到Quartz运行时候的环境以及Job本身的明细数据。</li>
+</ul>
+<h1 id="JobDataMap"><a href="#JobDataMap" class="headerlink" title="JobDataMap"></a>JobDataMap</h1><h2 id="JobDataMap简介"><a href="#JobDataMap简介" class="headerlink" title="JobDataMap简介"></a>JobDataMap简介</h2><ul>
+<li>在进行任务调度时JobDataMap存储在JobExecutionContext中，非常方便获取</li>
+<li>JobDataMap可以用来装载任何可序列化的数据对象，当Job实例对象被执行时这些参数对象会传递给它。</li>
+<li>JobDataMap实现了JDK的Map接口，并且添加了一些非常方便的方法用来存取基本数据类型。</li>
+</ul>
+<h2 id="JobDataMap获取方式一：从Map中直接获取"><a href="#JobDataMap获取方式一：从Map中直接获取" class="headerlink" title="JobDataMap获取方式一：从Map中直接获取"></a>JobDataMap获取方式一：从Map中直接获取</h2><ul>
+<li>分别获得JobDetail和Trigger下的JobDataMap</li>
+</ul>
+<p>HelloJob.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.olliego;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.quartz.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.text.SimpleDateFormat;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * HelloJob</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> OllieGo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2020-06-21</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloJob</span> <span class="keyword">implements</span> <span class="title">Job</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(JobExecutionContext jobExecutionContext)</span> <span class="keyword">throws</span> JobExecutionException </span>&#123;</span><br><span class="line">        <span class="comment">//打印当前时间</span></span><br><span class="line">        Date date = <span class="keyword">new</span> Date();</span><br><span class="line">        SimpleDateFormat sf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;当前任务时间：&quot;</span> + sf.format(date));</span><br><span class="line">        JobKey key = jobExecutionContext.getJobDetail().getKey();</span><br><span class="line">        System.out.println(<span class="string">&quot;my job name and group are:&quot;</span> + key.getName() + <span class="string">&quot;:&quot;</span></span><br><span class="line">                +key.getGroup());</span><br><span class="line">        TriggerKey triggerKey = jobExecutionContext.getTrigger().getKey();</span><br><span class="line">        System.out.println(<span class="string">&quot;my trigger name and group are:&quot;</span> + triggerKey.getName() + <span class="string">&quot;:&quot;</span></span><br><span class="line">                +triggerKey.getGroup());</span><br><span class="line"></span><br><span class="line">        <span class="comment">//分别获得JobDetail和Trigger下的JobDataMap</span></span><br><span class="line">        JobDataMap dataMap = jobExecutionContext.getJobDetail().getJobDataMap();</span><br><span class="line">        JobDataMap triggerDataMap = jobExecutionContext.getTrigger().getJobDataMap();</span><br><span class="line">        String jobMsg = dataMap.getString(<span class="string">&quot;message&quot;</span>);</span><br><span class="line">        Float jobFloatValue = dataMap.getFloat(<span class="string">&quot;FloatJobValue&quot;</span>);</span><br><span class="line">        String triggerMsg = triggerDataMap.getString(<span class="string">&quot;message&quot;</span>);</span><br><span class="line">        Double triggerDoubleValue = triggerDataMap.getDouble(<span class="string">&quot;DoubleTriggerValue&quot;</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;jobMsg:&quot;</span> + jobMsg);</span><br><span class="line">        System.out.println(<span class="string">&quot;jobFloatValue:&quot;</span> + jobFloatValue);</span><br><span class="line">        System.out.println(<span class="string">&quot;triggerMsg:&quot;</span> + triggerMsg);</span><br><span class="line">        System.out.println(<span class="string">&quot;triggerDoubleValue:&quot;</span> + triggerDoubleValue);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>HelloScheduler.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.olliego;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.quartz.*;</span><br><span class="line"><span class="keyword">import</span> org.quartz.impl.StdSchedulerFactory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.text.SimpleDateFormat;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * HelloScheduler</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> OllieGo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2020-06-21</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloScheduler</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> SchedulerException </span>&#123;</span><br><span class="line">        <span class="comment">//创建一个JobDetail实例，将该实例与HelloJob Class绑定，通过反射获取Job信息</span></span><br><span class="line">        JobDetail jobDetail = JobBuilder.newJob(HelloJob.class)</span><br><span class="line">                .withIdentity(<span class="string">&quot;myJob&quot;</span>, <span class="string">&quot;group1&quot;</span>)</span><br><span class="line">                .usingJobData(<span class="string">&quot;message&quot;</span>, <span class="string">&quot;hello myJob1&quot;</span>)</span><br><span class="line">                .usingJobData(<span class="string">&quot;FloatJobValue&quot;</span>, <span class="number">3.14F</span>)</span><br><span class="line">                .build();</span><br><span class="line">        <span class="comment">//创建一个Trigger实例，定义该Job立即执行，并且两秒执行一次，直到永远</span></span><br><span class="line">        <span class="comment">//虽然组名同为group1，但Trigger和JobDetail类不同，故不同组</span></span><br><span class="line">        Trigger trigger = TriggerBuilder.newTrigger()</span><br><span class="line">                .withIdentity(<span class="string">&quot;myTrigger&quot;</span>, <span class="string">&quot;group1&quot;</span>)</span><br><span class="line">                .usingJobData(<span class="string">&quot;message&quot;</span>, <span class="string">&quot;hello myTrigger1&quot;</span>)</span><br><span class="line">                .usingJobData(<span class="string">&quot;DoubleTriggerValue&quot;</span>, <span class="number">2.0D</span>)</span><br><span class="line">                .startNow()</span><br><span class="line">                .withSchedule(</span><br><span class="line">                        SimpleScheduleBuilder.simpleSchedule()</span><br><span class="line">                                .withIntervalInSeconds(<span class="number">2</span>).repeatForever())</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建Scheduler实例</span></span><br><span class="line">        SchedulerFactory schedulerFactory = <span class="keyword">new</span> StdSchedulerFactory();</span><br><span class="line">        Scheduler scheduler = schedulerFactory.getScheduler();</span><br><span class="line">        scheduler.start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//打印当前时间</span></span><br><span class="line">        Date date = <span class="keyword">new</span> Date();</span><br><span class="line">        SimpleDateFormat sf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;当前时间：&quot;</span> + sf.format(date));</span><br><span class="line"></span><br><span class="line">        <span class="comment">//将jobDetail和trigger绑定在一起，并传入到scheduler</span></span><br><span class="line">        scheduler.scheduleJob(jobDetail, trigger);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">当前时间：2020-06-21 11:37:29</span><br><span class="line">当前任务时间：2020-06-21 11:37:29</span><br><span class="line">my job name and group are:myJob:group1</span><br><span class="line">my trigger name and group are:myTrigger:group1</span><br><span class="line">jobMsg:hello myJob1</span><br><span class="line">jobFloatValue:3.14</span><br><span class="line">triggerMsg:hello myTrigger1</span><br><span class="line">triggerDoubleValue:2.0</span><br><span class="line">当前任务时间：2020-06-21 11:37:31</span><br><span class="line">my job name and group are:myJob:group1</span><br><span class="line">my trigger name and group are:myTrigger:group1</span><br><span class="line">jobMsg:hello myJob1</span><br><span class="line">jobFloatValue:3.14</span><br><span class="line">triggerMsg:hello myTrigger1</span><br><span class="line">triggerDoubleValue:2.0</span><br><span class="line">当前任务时间：2020-06-21 11:37:33</span><br><span class="line">my job name and group are:myJob:group1</span><br><span class="line">my trigger name and group are:myTrigger:group1</span><br><span class="line">jobMsg:hello myJob1</span><br><span class="line">jobFloatValue:3.14</span><br><span class="line">triggerMsg:hello myTrigger1</span><br><span class="line">triggerDoubleValue:2.0</span><br><span class="line">当前任务时间：2020-06-21 11:37:35</span><br><span class="line">my job name and group are:myJob:group1</span><br><span class="line">my trigger name and group are:myTrigger:group1</span><br><span class="line">jobMsg:hello myJob1</span><br><span class="line">jobFloatValue:3.14</span><br><span class="line">triggerMsg:hello myTrigger1</span><br><span class="line">triggerDoubleValue:2.0</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>JobDataMap合并获取<br>通过getMergedJobDataMap()合并Trigger和JobDetail的DataMap，相同名称数据Trigger覆盖JobDetail</li>
+</ul>
+<p>HelloScheduler.java同上</p>
+<p>HelloJob.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.olliego;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.quartz.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.text.SimpleDateFormat;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * HelloJob</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> OllieGo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2020-06-21</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloJob</span> <span class="keyword">implements</span> <span class="title">Job</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(JobExecutionContext jobExecutionContext)</span> <span class="keyword">throws</span> JobExecutionException </span>&#123;</span><br><span class="line">        <span class="comment">//打印当前时间</span></span><br><span class="line">        Date date = <span class="keyword">new</span> Date();</span><br><span class="line">        SimpleDateFormat sf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;当前任务时间：&quot;</span> + sf.format(date));</span><br><span class="line">        JobKey key = jobExecutionContext.getJobDetail().getKey();</span><br><span class="line">        System.out.println(<span class="string">&quot;my job name and group are:&quot;</span> + key.getName() + <span class="string">&quot;:&quot;</span></span><br><span class="line">                +key.getGroup());</span><br><span class="line">        TriggerKey triggerKey = jobExecutionContext.getTrigger().getKey();</span><br><span class="line">        System.out.println(<span class="string">&quot;my trigger name and group are:&quot;</span> + triggerKey.getName() + <span class="string">&quot;:&quot;</span></span><br><span class="line">                +triggerKey.getGroup());</span><br><span class="line"></span><br><span class="line">        <span class="comment">//合并之后的DataMap</span></span><br><span class="line">        JobDataMap dataMap = jobExecutionContext.getMergedJobDataMap();</span><br><span class="line">        </span><br><span class="line">        String msg = dataMap.getString(<span class="string">&quot;message&quot;</span>);</span><br><span class="line">        Float jobFloatValue = dataMap.getFloat(<span class="string">&quot;FloatJobValue&quot;</span>);</span><br><span class="line">        Double triggerDoubleValue = dataMap.getDouble(<span class="string">&quot;DoubleTriggerValue&quot;</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;jobFloatValue:&quot;</span> + jobFloatValue);</span><br><span class="line">        System.out.println(<span class="string">&quot;msg:&quot;</span> + msg);</span><br><span class="line">        System.out.println(<span class="string">&quot;triggerDoubleValue:&quot;</span> + triggerDoubleValue);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">当前时间：2020-06-21 18:08:25</span><br><span class="line">当前任务时间：2020-06-21 18:08:25</span><br><span class="line">my job name and group are:myJob:group1</span><br><span class="line">my trigger name and group are:myTrigger:group1</span><br><span class="line">jobFloatValue:3.14</span><br><span class="line">msg:hello myTrigger1</span><br><span class="line">triggerDoubleValue:2.0</span><br><span class="line">当前任务时间：2020-06-21 18:08:27</span><br><span class="line">my job name and group are:myJob:group1</span><br><span class="line">my trigger name and group are:myTrigger:group1</span><br><span class="line">jobFloatValue:3.14</span><br><span class="line">msg:hello myTrigger1</span><br><span class="line">triggerDoubleValue:2.0</span><br><span class="line">当前任务时间：2020-06-21 18:08:29</span><br><span class="line">my job name and group are:myJob:group1</span><br><span class="line">my trigger name and group are:myTrigger:group1</span><br><span class="line">jobFloatValue:3.14</span><br><span class="line">msg:hello myTrigger1</span><br><span class="line">triggerDoubleValue:2.0</span><br><span class="line">当前任务时间：2020-06-21 18:08:31</span><br><span class="line">my job name and group are:myJob:group1</span><br><span class="line">my trigger name and group are:myTrigger:group1</span><br><span class="line">jobFloatValue:3.14</span><br><span class="line">msg:hello myTrigger1</span><br><span class="line">triggerDoubleValue:2.0</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h2 id="JobDataMap获取方式二：从Map中直接获取"><a href="#JobDataMap获取方式二：从Map中直接获取" class="headerlink" title="JobDataMap获取方式二：从Map中直接获取"></a>JobDataMap获取方式二：从Map中直接获取</h2><p>Job实现类中添加setter方法对应JobDataMap的键值（Quartz框架默认的JobFactory实现类在初始化Job实例对象时会自动地调用这些setter方法）</p>
+<p>HelloScheduler.java同上</p>
+<p>定义三个成员变量message、FloatJobValue、DoubleTriggerValue，名称与传入参数的key相同。<br>定义set方法，在生成Job实现类时通过反射调用set方法，对同名的成员变量进行赋值。<br>HelloJob.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.olliego;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.quartz.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.text.SimpleDateFormat;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * HelloJob</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> OllieGo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2020-06-21</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloJob</span> <span class="keyword">implements</span> <span class="title">Job</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String message;</span><br><span class="line">    <span class="keyword">private</span> Float FloatJobValue;</span><br><span class="line">    <span class="keyword">private</span> Double DoubleTriggerValue;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getMessage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> message;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMessage</span><span class="params">(String message)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.message = message;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Float <span class="title">getFloatJobValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> FloatJobValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setFloatJobValue</span><span class="params">(Float floatJobValue)</span> </span>&#123;</span><br><span class="line">        FloatJobValue = floatJobValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Double <span class="title">getDoubleTriggerValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> DoubleTriggerValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDoubleTriggerValue</span><span class="params">(Double doubleTriggerValue)</span> </span>&#123;</span><br><span class="line">        DoubleTriggerValue = doubleTriggerValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(JobExecutionContext jobExecutionContext)</span> <span class="keyword">throws</span> JobExecutionException </span>&#123;</span><br><span class="line">        <span class="comment">//打印当前时间</span></span><br><span class="line">        Date date = <span class="keyword">new</span> Date();</span><br><span class="line">        SimpleDateFormat sf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;当前任务时间：&quot;</span> + sf.format(date));</span><br><span class="line">        JobKey key = jobExecutionContext.getJobDetail().getKey();</span><br><span class="line">        System.out.println(<span class="string">&quot;my job name and group are:&quot;</span> + key.getName() + <span class="string">&quot;:&quot;</span></span><br><span class="line">                +key.getGroup());</span><br><span class="line">        TriggerKey triggerKey = jobExecutionContext.getTrigger().getKey();</span><br><span class="line">        System.out.println(<span class="string">&quot;my trigger name and group are:&quot;</span> + triggerKey.getName() + <span class="string">&quot;:&quot;</span></span><br><span class="line">                +triggerKey.getGroup());</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;jobFloatValue:&quot;</span> + FloatJobValue);</span><br><span class="line">        System.out.println(<span class="string">&quot;msg:&quot;</span> + message);</span><br><span class="line">        System.out.println(<span class="string">&quot;triggerDoubleValue:&quot;</span> + DoubleTriggerValue);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">当前时间：2020-06-21 18:40:15</span><br><span class="line">当前任务时间：2020-06-21 18:40:15</span><br><span class="line">my job name and group are:myJob:group1</span><br><span class="line">my trigger name and group are:myTrigger:group1</span><br><span class="line">jobFloatValue:3.14</span><br><span class="line">msg:hello myTrigger1</span><br><span class="line">triggerDoubleValue:2.0</span><br><span class="line">当前任务时间：2020-06-21 18:40:17</span><br><span class="line">my job name and group are:myJob:group1</span><br><span class="line">my trigger name and group are:myTrigger:group1</span><br><span class="line">jobFloatValue:3.14</span><br><span class="line">msg:hello myTrigger1</span><br><span class="line">triggerDoubleValue:2.0</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h1 id="Trigger"><a href="#Trigger" class="headerlink" title="Trigger"></a>Trigger</h1><p>Quartz中的触发器，用来告诉调度程序作业什么时候触发。<br>即Trigger对象时是用来触发执行Job的。</p>
+<h2 id="触发器通用属性"><a href="#触发器通用属性" class="headerlink" title="触发器通用属性"></a>触发器通用属性</h2><ul>
+<li>JobKey<br>表示Job实例的标识，触发器被触发时，该指定的Job实例会执行。</li>
+<li>StartTime<br>表示触发器的时间表首次被触发的时间。<br>值的类型是Java.util.Date。</li>
+<li>EndTime<br>指定触发器的不再被触发的时间。<br>值的类型是Java.util.Date。</li>
+</ul>
+<p>HelloJob.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.olliego;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.quartz.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.text.SimpleDateFormat;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * HelloJob</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> OllieGo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2020-06-24</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloJob</span> <span class="keyword">implements</span> <span class="title">Job</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String message;</span><br><span class="line">    <span class="keyword">private</span> Float FloatJobValue;</span><br><span class="line">    <span class="keyword">private</span> Double DoubleTriggerValue;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getMessage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> message;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMessage</span><span class="params">(String message)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.message = message;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Float <span class="title">getFloatJobValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> FloatJobValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setFloatJobValue</span><span class="params">(Float floatJobValue)</span> </span>&#123;</span><br><span class="line">        FloatJobValue = floatJobValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Double <span class="title">getDoubleTriggerValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> DoubleTriggerValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDoubleTriggerValue</span><span class="params">(Double doubleTriggerValue)</span> </span>&#123;</span><br><span class="line">        DoubleTriggerValue = doubleTriggerValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(JobExecutionContext jobExecutionContext)</span> <span class="keyword">throws</span> JobExecutionException </span>&#123;</span><br><span class="line">        <span class="comment">//打印当前时间</span></span><br><span class="line">        Date date = <span class="keyword">new</span> Date();</span><br><span class="line">        SimpleDateFormat sf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;当前任务时间：&quot;</span> + sf.format(date));</span><br><span class="line"></span><br><span class="line">        Trigger currentTrigger = jobExecutionContext.getTrigger();</span><br><span class="line">        System.out.println(<span class="string">&quot;Start Time Is:&quot;</span> + sf.format(currentTrigger.getStartTime()));</span><br><span class="line">        System.out.println(<span class="string">&quot;End Time Is:&quot;</span> + sf.format(currentTrigger.getEndTime()));</span><br><span class="line">        JobKey jobKey = currentTrigger.getJobKey();</span><br><span class="line">        System.out.println(<span class="string">&quot;JobKey info---&quot;</span> + <span class="string">&quot;jobName:&quot;</span> + jobKey.getName()</span><br><span class="line">                + <span class="string">&quot; jobGroup:&quot;</span> + jobKey.getGroup());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>HelloScheduler.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.olliego;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.quartz.*;</span><br><span class="line"><span class="keyword">import</span> org.quartz.impl.StdSchedulerFactory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.text.SimpleDateFormat;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * HelloScheduler</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> OllieGo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2020-06-24</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloScheduler</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> SchedulerException </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//打印当前时间</span></span><br><span class="line">        Date date = <span class="keyword">new</span> Date();</span><br><span class="line">        SimpleDateFormat sf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;当前时间：&quot;</span> + sf.format(date));</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建一个JobDetail实例，将该实例与HelloJob Class绑定，通过反射获取Job信息</span></span><br><span class="line">        JobDetail jobDetail = JobBuilder.newJob(HelloJob.class)</span><br><span class="line">                .withIdentity(<span class="string">&quot;myJob&quot;</span>, <span class="string">&quot;group1&quot;</span>).build();</span><br><span class="line">        <span class="comment">//获取当前时间3秒后的时间</span></span><br><span class="line">        date.setTime(date.getTime() + <span class="number">3000</span>);</span><br><span class="line">        <span class="comment">//获取当前时间6秒后的时间</span></span><br><span class="line">        Date endDate = <span class="keyword">new</span> Date();</span><br><span class="line">        endDate.setTime(endDate.getTime() + <span class="number">6000</span>);</span><br><span class="line">        <span class="comment">//创建一个Trigger实例，定义该Job立即执行，并且两秒执行一次，直到永远</span></span><br><span class="line">        <span class="comment">//虽然组名同为group1，但Trigger和JobDetail类不同，故不同组</span></span><br><span class="line">        Trigger trigger = TriggerBuilder</span><br><span class="line">                .newTrigger()</span><br><span class="line">                .withIdentity(<span class="string">&quot;myTrigger&quot;</span>, <span class="string">&quot;group1&quot;</span>)</span><br><span class="line">                .startAt(date)</span><br><span class="line">                .endAt(endDate)</span><br><span class="line">                .withSchedule(</span><br><span class="line">                        SimpleScheduleBuilder.simpleSchedule()</span><br><span class="line">                                .withIntervalInSeconds(<span class="number">2</span>).repeatForever())</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建Scheduler实例</span></span><br><span class="line">        SchedulerFactory schedulerFactory = <span class="keyword">new</span> StdSchedulerFactory();</span><br><span class="line">        Scheduler scheduler = schedulerFactory.getScheduler();</span><br><span class="line">        scheduler.start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//将jobDetail和trigger绑定在一起，并传入到scheduler</span></span><br><span class="line">        scheduler.scheduleJob(jobDetail, trigger);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">当前时间：2020-06-24 22:10:52</span><br><span class="line">当前任务时间：2020-06-24 22:10:55</span><br><span class="line">Start Time Is:2020-06-24 22:10:55</span><br><span class="line">End Time Is:2020-06-24 22:10:58</span><br><span class="line">JobKey info---jobName:myJob jobGroup:group1</span><br><span class="line">当前任务时间：2020-06-24 22:10:57</span><br><span class="line">Start Time Is:2020-06-24 22:10:55</span><br><span class="line">End Time Is:2020-06-24 22:10:58</span><br><span class="line">JobKey info---jobName:myJob jobGroup:group1</span><br></pre></td></tr></table></figure>
+
+<h2 id="SimpleTrigger"><a href="#SimpleTrigger" class="headerlink" title="SimpleTrigger"></a>SimpleTrigger</h2><ul>
+<li>SimpleTrigger的作用<br>在一个 <em>指定时间段</em> 内 <em>执行一次</em> 作业任务<br>或是在 <em>指定的时间间隔</em> 内 <em>多次执行</em> 作业任务</li>
+</ul>
+<p>距离当前时间4秒后执行且仅执行一次任务</p>
+<p>HelloJob.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.olliego;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.quartz.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.text.SimpleDateFormat;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * HelloJob</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> OllieGo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2020-06-21</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloJob</span> <span class="keyword">implements</span> <span class="title">Job</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(JobExecutionContext jobExecutionContext)</span> <span class="keyword">throws</span> JobExecutionException </span>&#123;</span><br><span class="line">        <span class="comment">//打印当前时间</span></span><br><span class="line">        Date date = <span class="keyword">new</span> Date();</span><br><span class="line">        SimpleDateFormat sf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;当前任务时间：&quot;</span> + sf.format(date));</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello world&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>HelloScheduler.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.olliego;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.quartz.*;</span><br><span class="line"><span class="keyword">import</span> org.quartz.impl.StdSchedulerFactory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.text.SimpleDateFormat;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * HelloScheduler</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> OllieGo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2020-06-21</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloScheduler</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> SchedulerException </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//打印当前时间</span></span><br><span class="line">        Date date = <span class="keyword">new</span> Date();</span><br><span class="line">        SimpleDateFormat sf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;当前时间：&quot;</span> + sf.format(date));</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建一个JobDetail实例，将该实例与HelloJob Class绑定，通过反射获取Job信息</span></span><br><span class="line">        JobDetail jobDetail = JobBuilder.newJob(HelloJob.class)</span><br><span class="line">                .withIdentity(<span class="string">&quot;myJob&quot;</span>).build();</span><br><span class="line">        <span class="comment">//获取距离当前时间4秒后的具体时间</span></span><br><span class="line">        date.setTime(date.getTime() + <span class="number">4000L</span>);</span><br><span class="line">        <span class="comment">//距离当前时间4秒后执行且仅执行一次任务</span></span><br><span class="line">        SimpleTrigger trigger = (SimpleTrigger) TriggerBuilder</span><br><span class="line">                .newTrigger()</span><br><span class="line">                .withIdentity(<span class="string">&quot;myTrigger&quot;</span>, <span class="string">&quot;group1&quot;</span>)</span><br><span class="line">                .startAt(date)</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建Scheduler实例</span></span><br><span class="line">        SchedulerFactory schedulerFactory = <span class="keyword">new</span> StdSchedulerFactory();</span><br><span class="line">        Scheduler scheduler = schedulerFactory.getScheduler();</span><br><span class="line">        scheduler.start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//将jobDetail和trigger绑定在一起，并传入到scheduler</span></span><br><span class="line">        scheduler.scheduleJob(jobDetail, trigger);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">当前时间：2020-06-25 12:01:21</span><br><span class="line">当前任务时间：2020-06-25 12:01:25</span><br><span class="line">Hello world</span><br></pre></td></tr></table></figure>
+
+
+<p>距离当前时间4秒后首次执行任务，之后每隔两秒重复执行一次任务</p>
+<p>HelloJob.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.olliego;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.quartz.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.text.SimpleDateFormat;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * HelloJob</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> OllieGo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2020-06-21</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloJob</span> <span class="keyword">implements</span> <span class="title">Job</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(JobExecutionContext jobExecutionContext)</span> <span class="keyword">throws</span> JobExecutionException </span>&#123;</span><br><span class="line">        <span class="comment">//打印当前时间</span></span><br><span class="line">        Date date = <span class="keyword">new</span> Date();</span><br><span class="line">        SimpleDateFormat sf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;当前任务时间：&quot;</span> + sf.format(date));</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello world&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>HelloScheduler.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.olliego;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.quartz.*;</span><br><span class="line"><span class="keyword">import</span> org.quartz.impl.StdSchedulerFactory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.text.SimpleDateFormat;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * HelloScheduler</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> OllieGo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2020-06-21</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloScheduler</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> SchedulerException </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//打印当前时间</span></span><br><span class="line">        Date date = <span class="keyword">new</span> Date();</span><br><span class="line">        SimpleDateFormat sf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;当前时间：&quot;</span> + sf.format(date));</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建一个JobDetail实例，将该实例与HelloJob Class绑定，通过反射获取Job信息</span></span><br><span class="line">        JobDetail jobDetail = JobBuilder.newJob(HelloJob.class)</span><br><span class="line">                .withIdentity(<span class="string">&quot;myJob&quot;</span>).build();</span><br><span class="line">        <span class="comment">//获取距离当前时间4秒后的具体时间</span></span><br><span class="line">        date.setTime(date.getTime() + <span class="number">4000L</span>);</span><br><span class="line">        <span class="comment">//距离当前时间4秒后首次执行任务，之后每隔两秒重复执行一次任务</span></span><br><span class="line">        SimpleTrigger trigger = (SimpleTrigger) TriggerBuilder</span><br><span class="line">                .newTrigger()</span><br><span class="line">                .withIdentity(<span class="string">&quot;myTrigger&quot;</span>, <span class="string">&quot;group1&quot;</span>)</span><br><span class="line">                .startAt(date)</span><br><span class="line">                .withSchedule(</span><br><span class="line">                        SimpleScheduleBuilder.simpleSchedule()</span><br><span class="line">                        .withIntervalInSeconds(<span class="number">2</span>).withRepeatCount(</span><br><span class="line">                                SimpleTrigger.REPEAT_INDEFINITELY</span><br><span class="line">                        )</span><br><span class="line">                )</span><br><span class="line">                .build();</span><br><span class="line">        <span class="comment">//创建Scheduler实例</span></span><br><span class="line">        SchedulerFactory schedulerFactory = <span class="keyword">new</span> StdSchedulerFactory();</span><br><span class="line">        Scheduler scheduler = schedulerFactory.getScheduler();</span><br><span class="line">        scheduler.start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//将jobDetail和trigger绑定在一起，并传入到scheduler</span></span><br><span class="line">        scheduler.scheduleJob(jobDetail, trigger);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">当前时间：2020-06-25 13:07:41</span><br><span class="line">当前任务时间：2020-06-25 13:07:45</span><br><span class="line">Hello world</span><br><span class="line">当前任务时间：2020-06-25 13:07:47</span><br><span class="line">Hello world</span><br><span class="line">当前任务时间：2020-06-25 13:07:49</span><br><span class="line">Hello world</span><br><span class="line">当前任务时间：2020-06-25 13:07:51</span><br><span class="line">Hello world</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h2 id="CronTrigger"><a href="#CronTrigger" class="headerlink" title="CronTrigger"></a>CronTrigger</h2><ul>
+<li><p>CronTrigger的作用</p>
+</li>
+<li><p>基于日历* 的 <em>作业调度器</em>，<br>而不是像SimpleTrigger那样精确指定间隔时间，<br>比SimpleTrigger更常用。</p>
+</li>
+<li><p>Cron表达式<br>用于 <em>配置CronTrigger</em> 实例。<br>是由 <em>7个子表达式</em> 组成的字符串，描述了时间表的详细信息。<br>格式： <em>【秒】【分】【小时】【日】【月】【周】【年】</em></p>
+</li>
+</ul>
+<p><img src="https://wx4.sinaimg.cn/mw690/0079GFTfgy1gg4jmkmxdcj30pc0abjvi.jpg" alt="corn表达式字符"></p>
+<p><img src="https://wx2.sinaimg.cn/mw690/0079GFTfgy1gg4mrb6e2zj30qh09rq7c.jpg" alt="corn表达式举例"></p>
+<p><img src="https://wx1.sinaimg.cn/mw690/0079GFTfgy1gg4n2jydwlj313w0ope1c.jpg" alt="通配符说明"></p>
+<ul>
+<li>Cron表达式小提示<br>‘L’和’W’可以组合使用<br>周字段英文字母不区分大小写，即MON与mon相同<br>在线Cron表达式生成器，利用工具，在线生成</li>
+</ul>
+<p>每秒执行一次任务<br>HelloJob.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.olliego;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.quartz.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.text.SimpleDateFormat;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * HelloJob</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> OllieGo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2020-06-21</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloJob</span> <span class="keyword">implements</span> <span class="title">Job</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(JobExecutionContext jobExecutionContext)</span> <span class="keyword">throws</span> JobExecutionException </span>&#123;</span><br><span class="line">        <span class="comment">//打印当前时间</span></span><br><span class="line">        Date date = <span class="keyword">new</span> Date();</span><br><span class="line">        SimpleDateFormat sf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;当前任务时间：&quot;</span> + sf.format(date));</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello world&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>HelloScheduler.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.olliego;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.quartz.*;</span><br><span class="line"><span class="keyword">import</span> org.quartz.impl.StdSchedulerFactory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.text.SimpleDateFormat;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * HelloScheduler</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> OllieGo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2020-06-21</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloScheduler</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> SchedulerException </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//打印当前时间</span></span><br><span class="line">        Date date = <span class="keyword">new</span> Date();</span><br><span class="line">        SimpleDateFormat sf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;当前时间：&quot;</span> + sf.format(date));</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建一个JobDetail实例，将该实例与HelloJob Class绑定，通过反射获取Job信息</span></span><br><span class="line">        JobDetail jobDetail = JobBuilder.newJob(HelloJob.class)</span><br><span class="line">                .withIdentity(<span class="string">&quot;myJob&quot;</span>).build();</span><br><span class="line">        <span class="comment">//每秒触发一次任务</span></span><br><span class="line">        CronTrigger trigger = (CronTrigger) TriggerBuilder</span><br><span class="line">                .newTrigger()</span><br><span class="line">                .withIdentity(<span class="string">&quot;myTrigger&quot;</span>, <span class="string">&quot;group1&quot;</span>)</span><br><span class="line">                .withSchedule(</span><br><span class="line">                        CronScheduleBuilder.cronSchedule(<span class="string">&quot;* * * * * ? *&quot;</span>))</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建Scheduler实例</span></span><br><span class="line">        SchedulerFactory schedulerFactory = <span class="keyword">new</span> StdSchedulerFactory();</span><br><span class="line">        Scheduler scheduler = schedulerFactory.getScheduler();</span><br><span class="line">        scheduler.start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//将jobDetail和trigger绑定在一起，并传入到scheduler</span></span><br><span class="line">        scheduler.scheduleJob(jobDetail, trigger);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">当前时间：2020-06-25 13:57:09</span><br><span class="line">当前任务时间：2020-06-25 13:57:09</span><br><span class="line">Hello world</span><br><span class="line">当前任务时间：2020-06-25 13:57:10</span><br><span class="line">Hello world</span><br><span class="line">当前任务时间：2020-06-25 13:57:11</span><br><span class="line">Hello world</span><br><span class="line">当前任务时间：2020-06-25 13:57:12</span><br><span class="line">Hello world</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h1 id="Scheduler"><a href="#Scheduler" class="headerlink" title="Scheduler"></a>Scheduler</h1><p>Scheduler-工厂模式<br>所有的Scheduler实例应该由SchedulerFactory来创建<br>SchedulerFactory包含StdSchedulerFactory和DirectSchedulerFactory</p>
+<ul>
+<li>Quartz三个核心概念：<br>调度器（Scheduler） 负责定期去执行Job<br>任务（Job）需要实现的业务逻辑<br>触发器（Trigger）告诉调度器何时执行指定好的任务</li>
+</ul>
+<h2 id="StdSchedulerFactory"><a href="#StdSchedulerFactory" class="headerlink" title="StdSchedulerFactory"></a>StdSchedulerFactory</h2><ul>
+<li>使用一组参数（Java.util.Properties）来创建和初始化Quartz调度器</li>
+<li>配置参数一般存储在quartz.properties中</li>
+<li>调用getScheduler方法就能创建和初始化调度器对象</li>
+</ul>
+<h2 id="StdSchedulerFactory的创建方式"><a href="#StdSchedulerFactory的创建方式" class="headerlink" title="StdSchedulerFactory的创建方式"></a>StdSchedulerFactory的创建方式</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SchedulerFactory schedulerFactory = <span class="keyword">new</span> StdSchedulerFactory();</span><br><span class="line">Scheduler scheduler = schedulerFactory.getScheduler();</span><br></pre></td></tr></table></figure>
+
+<p>standby()表示scheduler挂起,可调用start()继续执行<br>shutdown(true)表示等待所有正在执行的job执行完毕之后，再关闭scheduler<br>shutdown(false)即shutdown()，表示直接关闭scheduler</p>
+<p>HelloJob.java同上</p>
+<p>HelloScheduler.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.olliego;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.quartz.*;</span><br><span class="line"><span class="keyword">import</span> org.quartz.impl.StdSchedulerFactory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.text.SimpleDateFormat;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * HelloScheduler</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> OllieGo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2020-06-21</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloScheduler</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> SchedulerException, InterruptedException </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//打印当前时间</span></span><br><span class="line">        Date date = <span class="keyword">new</span> Date();</span><br><span class="line">        SimpleDateFormat sf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;当前时间：&quot;</span> + sf.format(date));</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建一个JobDetail实例，将该实例与HelloJob Class绑定，通过反射获取Job信息</span></span><br><span class="line">        JobDetail jobDetail = JobBuilder.newJob(HelloJob.class)</span><br><span class="line">                .withIdentity(<span class="string">&quot;myJob&quot;</span>).build();</span><br><span class="line">        <span class="comment">//每秒触发一次任务</span></span><br><span class="line">        CronTrigger trigger = (CronTrigger) TriggerBuilder</span><br><span class="line">                .newTrigger()</span><br><span class="line">                .withIdentity(<span class="string">&quot;myTrigger&quot;</span>, <span class="string">&quot;group1&quot;</span>)</span><br><span class="line">                .withSchedule(</span><br><span class="line">                        CronScheduleBuilder.cronSchedule(<span class="string">&quot;* * * * * ?&quot;</span>))</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建Scheduler实例</span></span><br><span class="line">        SchedulerFactory schedulerFactory = <span class="keyword">new</span> StdSchedulerFactory();</span><br><span class="line">        Scheduler scheduler = schedulerFactory.getScheduler();</span><br><span class="line">        scheduler.start();</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;scheduled time is:&quot;</span></span><br><span class="line">                + sf.format(scheduler.scheduleJob(jobDetail, trigger)));</span><br><span class="line">        <span class="comment">//scheduler执行两秒后挂起,standby()</span></span><br><span class="line">        Thread.sleep(<span class="number">2000L</span>);</span><br><span class="line">        scheduler.standby();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//scheduler执行三秒后继续执行</span></span><br><span class="line">        Thread.sleep(<span class="number">3000L</span>);</span><br><span class="line">        scheduler.start();</span><br><span class="line"></span><br><span class="line">        Thread.sleep(<span class="number">3000L</span>);</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * shutdown(true)表示等待所有正在执行的job执行完毕之后，再关闭scheduler</span></span><br><span class="line"><span class="comment">         * shutdown(false)即shutdown()，表示直接关闭scheduler</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        scheduler.shutdown(<span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/05/09/20190509%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/" rel="prev" title="排序算法">
+      <i class="fa fa-chevron-left"></i> 排序算法
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Inhaltsverzeichnis
+        </li>
+        <li class="sidebar-nav-overview">
+          Übersicht
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Quartz-%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">Quartz 核心概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AAQuartz%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.</span> <span class="nav-text">第一个Quartz程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Job-amp-JobDetail"><span class="nav-number">3.</span> <span class="nav-text">Job&amp;JobDetail</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Job%E5%AE%9E%E4%BE%8B%E5%9C%A8Quartz%E4%B8%AD%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">3.1.</span> <span class="nav-text">Job实例在Quartz中的生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JobDetail"><span class="nav-number">3.2.</span> <span class="nav-text">JobDetail</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JobExecutionContext"><span class="nav-number">4.</span> <span class="nav-text">JobExecutionContext</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JobDataMap"><span class="nav-number">5.</span> <span class="nav-text">JobDataMap</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JobDataMap%E7%AE%80%E4%BB%8B"><span class="nav-number">5.1.</span> <span class="nav-text">JobDataMap简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JobDataMap%E8%8E%B7%E5%8F%96%E6%96%B9%E5%BC%8F%E4%B8%80%EF%BC%9A%E4%BB%8EMap%E4%B8%AD%E7%9B%B4%E6%8E%A5%E8%8E%B7%E5%8F%96"><span class="nav-number">5.2.</span> <span class="nav-text">JobDataMap获取方式一：从Map中直接获取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JobDataMap%E8%8E%B7%E5%8F%96%E6%96%B9%E5%BC%8F%E4%BA%8C%EF%BC%9A%E4%BB%8EMap%E4%B8%AD%E7%9B%B4%E6%8E%A5%E8%8E%B7%E5%8F%96"><span class="nav-number">5.3.</span> <span class="nav-text">JobDataMap获取方式二：从Map中直接获取</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Trigger"><span class="nav-number">6.</span> <span class="nav-text">Trigger</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91%E5%99%A8%E9%80%9A%E7%94%A8%E5%B1%9E%E6%80%A7"><span class="nav-number">6.1.</span> <span class="nav-text">触发器通用属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SimpleTrigger"><span class="nav-number">6.2.</span> <span class="nav-text">SimpleTrigger</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CronTrigger"><span class="nav-number">6.3.</span> <span class="nav-text">CronTrigger</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Scheduler"><span class="nav-number">7.</span> <span class="nav-text">Scheduler</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#StdSchedulerFactory"><span class="nav-number">7.1.</span> <span class="nav-text">StdSchedulerFactory</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#StdSchedulerFactory%E7%9A%84%E5%88%9B%E5%BB%BA%E6%96%B9%E5%BC%8F"><span class="nav-number">7.2.</span> <span class="nav-text">StdSchedulerFactory的创建方式</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="OllieGo"
+      src="/images/olliego.jpg">
+  <p class="site-author-name" itemprop="name">OllieGo</p>
+  <div class="site-description" itemprop="description">落叶焚いて野守の神を见し夜かな</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">Artikel</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">Kategorien</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">schlagwörter</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/OllieGo" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;OllieGo" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">OllieGo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="Insgesamt gezählte Symbole">70k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="Insgesamte Lesezeit">1:04</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
