@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/skate-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/skate-16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Python爬虫">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Raccon：下载公众号历史文章">
+<meta property="og:url" content="http://example.com/2021/04/05/20210405%E7%88%AC%E5%8F%96%E5%85%AC%E4%BC%97%E5%8F%B7%E5%8E%86%E5%8F%B2%E6%96%87%E7%AB%A0/index.html">
+<meta property="og:site_name" content="踢树叶">
+<meta property="og:description" content="Python爬虫">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-05T13:18:36.000Z">
+<meta property="article:modified_time" content="2021-04-05T13:18:52.382Z">
+<meta property="article:author" content="OllieGo">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/04/05/20210405%E7%88%AC%E5%8F%96%E5%85%AC%E4%BC%97%E5%8F%B7%E5%8E%86%E5%8F%B2%E6%96%87%E7%AB%A0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Raccon：下载公众号历史文章 | 踢树叶</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">踢树叶</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/05/20210405%E7%88%AC%E5%8F%96%E5%85%AC%E4%BC%97%E5%8F%B7%E5%8E%86%E5%8F%B2%E6%96%87%E7%AB%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/olliego.jpg">
+      <meta itemprop="name" content="OllieGo">
+      <meta itemprop="description" content="落叶焚いて野守の神を见し夜かな">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="踢树叶">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Raccon：下载公众号历史文章
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-05 21:18:36 / 修改时间：21:18:52" itemprop="dateCreated datePublished" datetime="2021-04-05T21:18:36+08:00">2021-04-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Python爬虫<span id="more"></span></p>
+<h1 id="教程"><a href="#教程" class="headerlink" title="教程"></a>教程</h1><p>登录微信公众号后台</p>
+<p>在新建图文素材界面添加超链接</p>
+<p>选择其他公众号链接内容，通过Chrome DevTools获取目标公众号ID(fakeid)和自己的cookie和token</p>
+<p>替换SearchArticles.py中三个参数（fakeid、token、Cookie）并执行</p>
+<p>生成的csv/articles.csv文件包含文章标题和地址</p>
+<p>执行DownloadArticles.py下载文章，生成路径可自行修改</p>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p>查询公众号历史文章<br>SearchArticles.py</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过微信公众平台素材管理 查询公众号历史文章</span></span><br><span class="line"><span class="comment"># 根据自己的cookie和token进行更改</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 目标url</span></span><br><span class="line">url = <span class="string">&quot;https://mp.weixin.qq.com/cgi-bin/appmsg&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用Cookie，跳过登录操作</span></span><br><span class="line">headers = &#123;</span><br><span class="line">    <span class="string">&quot;Cookie&quot;</span>: <span class="string">&quot;noticeLoginFlag=1; remember_acct=939571103@qq.com; appmsglist_action_3899606125=card; pgv_pvi=3658089472; RK=dAhgLO1zFn; ptcz=320bcb8913d9209a298c4d9755601f2ca537961f0e483181755d2561930f0551; pgv_pvid=1893749385; pac_uid=0_f6bdab6174356; ua_id=iGm30scGY5BGw01dAAAAAOIgUEv1oMHVMTX51uXBU8U=; wxuin=17542032848578; bizuin=3899606125; rand_info=CAESILCOJBx+BJOfl6U8VuNGYfpprtBQ8hUsV50UFVkafqTp; slave_bizuin=3899606125; data_bizuin=3899606125; data_ticket=dYGGNL8PUYZpy0lc/1h2DyGd9MGmNS2qZ094H/75ms2Aew9cKVfwivQCf7hn1tuQ; slave_sid=dlhfc05seHFVSWxPY3ZMOHhEellfSjd6MlhCYU90b1puRTRpTTRRaHpnVzBhREg5ZVNzRDNVWU5OMHlnb1VuanQzajZucmoxS1owUEVJeFRTNW93eGdjbEFpOE5RX2RkNXRNQ0NINko5WHFJTHpHckRZR3lMbkoya2lPMnhlRW9ZSERLUmlzRkxRYlBmaDBh; slave_user=gh_fd75692e1901; xid=ef322c58dc724ab02282b419a72770f4; openid2ticket_obURv6BZFggp6EkxAA9EgvbjtKrc=6uI1XlUj7wxSBZs1rG3i1HyKTe2wgp/k+iLSli8zpFM=; mm_lang=zh_CN&quot;</span>,</span><br><span class="line">    <span class="string">&quot;User-Agent&quot;</span>: <span class="string">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36&quot;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># fakeid是公众号id</span></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">&quot;token&quot;</span>: <span class="string">&quot;1950979280&quot;</span>,</span><br><span class="line">    <span class="string">&quot;lang&quot;</span>: <span class="string">&quot;zh_CN&quot;</span>,</span><br><span class="line">    <span class="string">&quot;f&quot;</span>: <span class="string">&quot;json&quot;</span>,</span><br><span class="line">    <span class="string">&quot;ajax&quot;</span>: <span class="string">&quot;1&quot;</span>,</span><br><span class="line">    <span class="string">&quot;action&quot;</span>: <span class="string">&quot;list_ex&quot;</span>,</span><br><span class="line">    <span class="string">&quot;begin&quot;</span>: <span class="string">&quot;0&quot;</span>,</span><br><span class="line">    <span class="string">&quot;count&quot;</span>: <span class="string">&quot;5&quot;</span>,</span><br><span class="line">    <span class="string">&quot;query&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">    <span class="string">&quot;fakeid&quot;</span>: <span class="string">&quot;MjM5NzE2NTY0Ng==&quot;</span>,</span><br><span class="line">    <span class="string">&quot;type&quot;</span>: <span class="string">&quot;9&quot;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">content_list = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">20</span>):</span><br><span class="line">    data[<span class="string">&quot;begin&quot;</span>] = i * <span class="number">5</span></span><br><span class="line">    time.sleep(<span class="number">5</span>)</span><br><span class="line">    <span class="comment"># 使用get方法进行提交</span></span><br><span class="line">    content_json = requests.get(url, headers=headers, params=data).json()</span><br><span class="line">    <span class="comment"># 返回了一个json，里面是每一页的数据</span></span><br><span class="line">    <span class="keyword">for</span> item <span class="keyword">in</span> content_json[<span class="string">&quot;app_msg_list&quot;</span>]:</span><br><span class="line">        <span class="comment"># 提取每页文章的标题及对应的url</span></span><br><span class="line">        items = []</span><br><span class="line">        items.append(item[<span class="string">&quot;title&quot;</span>])</span><br><span class="line">        <span class="comment"># items.append(item[&quot;digest&quot;])  # 文章摘要</span></span><br><span class="line">        items.append(item[<span class="string">&quot;link&quot;</span>])</span><br><span class="line">        content_list.append(items)</span><br><span class="line">    print(i)</span><br><span class="line"></span><br><span class="line">name = [<span class="string">&#x27;title&#x27;</span>, <span class="string">&#x27;link&#x27;</span>]</span><br><span class="line"><span class="comment"># name = [&#x27;title&#x27;, &#x27;digest&#x27;, &#x27;link&#x27;]</span></span><br><span class="line">test = pd.DataFrame(columns=name, data=content_list)</span><br><span class="line">test.to_csv(<span class="string">&quot;.//csv//articles.csv&quot;</span>, mode=<span class="string">&#x27;a&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">print(<span class="string">&quot;保存成功&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>下载公众号文章<br>DownloadArticles.py</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过url下载公众号文章</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取文件</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">ReadFile</span>(<span class="params">filePath</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(filePath, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        all_the_text = f.read()</span><br><span class="line">    <span class="keyword">return</span> all_the_text</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 保存文件函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">SaveFile</span>(<span class="params">filePath, fileContent</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(filePath, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(fileContent)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将图片从远程下载到本地</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">DownloadImg</span>(<span class="params">url, savePath</span>):</span></span><br><span class="line">    r = requests.get(url)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(savePath, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(r.content)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改网页中图片的src，使图片能正常显示</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">ChangeImgSrc</span>(<span class="params">htmlSource</span>):</span></span><br><span class="line">    bs = BeautifulSoup(htmlSource, <span class="string">&quot;lxml&quot;</span>)  <span class="comment"># 由网页源代码生成BeautifulSoup对象</span></span><br><span class="line">    imgList = bs.find_all(<span class="string">&quot;img&quot;</span>)  <span class="comment"># 找出网页中所有img标签</span></span><br><span class="line">    imgIndex = <span class="number">0</span>  <span class="comment"># 图片编号，不同图片要保存为不同名称</span></span><br><span class="line">    <span class="keyword">for</span> img <span class="keyword">in</span> imgList:</span><br><span class="line">        imgIndex += <span class="number">1</span></span><br><span class="line">        originalUrl = <span class="string">&quot;&quot;</span>  <span class="comment"># 定义一个变量保存图片真实url</span></span><br><span class="line">        <span class="keyword">if</span> <span class="string">&quot;data-src&quot;</span> <span class="keyword">in</span> img.attrs:  <span class="comment"># 防止有的img标签中可能没有data-src而出错</span></span><br><span class="line">            originalUrl = img.attrs[<span class="string">&quot;data-src&quot;</span>]</span><br><span class="line">        <span class="keyword">elif</span> <span class="string">&quot;src&quot;</span> <span class="keyword">in</span> img.attrs:  <span class="comment"># 如果有src则提取出来</span></span><br><span class="line">            originalUrl = img.attrs[<span class="string">&quot;src&quot;</span>]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            originalUrl = <span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> originalUrl.startswith(<span class="string">&quot;//&quot;</span>):  <span class="comment"># 如果url以//开始，则需要添加http</span></span><br><span class="line">            originalUrl = <span class="string">&quot;http:&quot;</span> + originalUrl</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(originalUrl) &gt; <span class="number">0</span>:  <span class="comment"># 有图片网址则下载该图片</span></span><br><span class="line">            print(originalUrl)</span><br><span class="line">            <span class="keyword">if</span> <span class="string">&quot;data-type&quot;</span> <span class="keyword">in</span> img.attrs:</span><br><span class="line">                imgType = img.attrs[<span class="string">&quot;data-type&quot;</span>]  <span class="comment"># 文件扩展名</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                imgType = <span class="string">&quot;png&quot;</span>  <span class="comment"># 没有扩展名则默认png</span></span><br><span class="line">            imgName = <span class="built_in">str</span>(imgIndex) + <span class="string">&quot;.&quot;</span> + imgType</span><br><span class="line">            imgSavePath = <span class="string">&quot;D:/Raccon/images/&quot;</span> + imgName  <span class="comment"># 图片保存目录</span></span><br><span class="line">            DownloadImg(originalUrl, imgSavePath)  <span class="comment"># 下载图片</span></span><br><span class="line">            img.attrs[<span class="string">&quot;src&quot;</span>] = <span class="string">&quot;images/&quot;</span> + imgName  <span class="comment"># 网页中图片的相对路径</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            img.attrs[<span class="string">&quot;src&quot;</span>] = <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">str</span>(bs)  <span class="comment"># 将BeautifulSoup对象转为字符串，用于保存</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载url网页并保存</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">DownloadHtml</span>(<span class="params">url</span>):</span></span><br><span class="line">    <span class="comment"># 构造请求头</span></span><br><span class="line">    headers = &#123;</span><br><span class="line">        <span class="string">&#x27;User-Agent&#x27;</span>: <span class="string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;Accept&#x27;</span>: <span class="string">&#x27;text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;Connection&#x27;</span>: <span class="string">&#x27;keep-alive&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;Accept-Language&#x27;</span>: <span class="string">&#x27;zh-CN,zh;q=0.9,en;q=0.8&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 模拟浏览器发送请求</span></span><br><span class="line">    response = requests.get(url, headers=headers)</span><br><span class="line">    <span class="keyword">if</span> response.status_code == <span class="number">200</span>:  <span class="comment"># 返回码为200表示正常返回</span></span><br><span class="line">        htmltext = response.text  <span class="comment"># 网页正文</span></span><br><span class="line">        print(htmltext)</span><br><span class="line">        <span class="keyword">return</span> htmltext</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 判断文件夹是否存在，不存在则创建</span></span><br><span class="line">    dirs1 = <span class="string">&#x27;D:\\Raccon\\images&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(dirs1):</span><br><span class="line">        os.makedirs(dirs1)</span><br><span class="line"></span><br><span class="line">    filename = <span class="string">&#x27;.//csv//articles.csv&#x27;</span></span><br><span class="line">    num = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        num = <span class="built_in">len</span>(f.readlines()) - <span class="number">1</span></span><br><span class="line">        print(num)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 读取articles.csv</span></span><br><span class="line">    df = pd.read_csv(filename)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 下载每篇文章</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(num):</span><br><span class="line">        print(<span class="string">&quot;开始下载第&quot;</span> + <span class="built_in">str</span>(i) + <span class="string">&quot;篇文章&quot;</span>)</span><br><span class="line">        print(df[<span class="string">&quot;title&quot;</span>][i])</span><br><span class="line">        <span class="comment"># print(df[&quot;link&quot;][i])</span></span><br><span class="line"></span><br><span class="line">        title = df[<span class="string">&quot;title&quot;</span>][i]</span><br><span class="line">        url = df[<span class="string">&quot;link&quot;</span>][i]</span><br><span class="line">        htmlStr = DownloadHtml(url)</span><br><span class="line">        htmlStr2 = ChangeImgSrc(htmlStr)</span><br><span class="line">        savePath = <span class="string">&quot;D:/Raccon/&quot;</span> + title + <span class="string">&quot;.html&quot;</span></span><br><span class="line">        SaveFile(savePath, htmlStr2)</span><br></pre></td></tr></table></figure>
+
+<h1 id="github项目地址"><a href="#github项目地址" class="headerlink" title="github项目地址"></a>github项目地址</h1><p>源码<br><a target="_blank" rel="noopener" href="https://github.com/OllieGo/Raccon">https://github.com/OllieGo/Raccon</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/21/20200621Java%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E5%B7%A5%E5%85%B7Quartz/" rel="prev" title="Java定时任务调度工具Quartz">
+      <i class="fa fa-chevron-left"></i> Java定时任务调度工具Quartz
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%99%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">教程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#github%E9%A1%B9%E7%9B%AE%E5%9C%B0%E5%9D%80"><span class="nav-number">3.</span> <span class="nav-text">github项目地址</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="OllieGo"
+      src="/images/olliego.jpg">
+  <p class="site-author-name" itemprop="name">OllieGo</p>
+  <div class="site-description" itemprop="description">落叶焚いて野守の神を见し夜かな</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/OllieGo" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;OllieGo" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">OllieGo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">76k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">1:09</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
